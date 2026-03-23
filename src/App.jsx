@@ -1,7 +1,11 @@
+import Navbar from "./components/NavBar";
+import Home from "./pages/Home";
+
 export default function App() {
   return (
-    <h1 className="text-4xl font-bold text-blue-500">
-      Tailwind is working
-    </h1>
+    <div className="bg-bg min-h-screen text-textMain">
+      <Navbar />
+      <Home />
+    </div>
   );
 }
