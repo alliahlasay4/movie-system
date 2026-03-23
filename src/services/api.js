@@ -8,9 +8,23 @@ export const fetchPopularMovies = async () => {
   return res.json();
 };
 
-export const searchMovies = async (query) => {
+export const fetchPopularTV = async () => {
   const res = await fetch(
-    `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`
+    `${BASE_URL}/tv/popular?api_key=${API_KEY}`
+  );
+  return res.json();
+};
+
+export const searchMulti = async (query) => {
+  const res = await fetch(
+    `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${query}`
+  );
+  return res.json();
+};
+
+export const fetchTrending = async () => {
+  const res = await fetch(
+    `${BASE_URL}/trending/all/week?api_key=${API_KEY}`
   );
   return res.json();
 };

@@ -12,13 +12,16 @@ export default function MovieModal({ movie, onClose }) {
       >
 
         {/* LEFT: Poster */}
-        <div className="w-1/2 h-full bg-black">
+        {movie.poster_path ? (
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-            className="w-full h-full object-cover"
+            className="w-full h-[300px] object-cover"
           />
-        </div>
+        ) : (
+          <div className="h-[300px] flex items-center justify-center text-textMuted">
+            No Image
+          </div>
+        )}
 
         {/* RIGHT: Content */}
         <div className="w-1/2 h-full p-6 flex flex-col justify-between overflow-y-auto">
