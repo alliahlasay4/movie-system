@@ -60,7 +60,14 @@ export default function MovieModal({ movie, onClose }) {
               <span>•</span>
               <span className="uppercase">{movie.original_language}</span>
               <span>•</span>
-              <span>Horror</span>
+              <p className="text-sm text-textMuted">
+                {movie.genres
+                  ? movie.genres.map(g => g.name).join(", ")
+                  : movie.genre_ids
+                    ?.map(id => genreMap[id])
+                    .filter(Boolean)
+                    .join(", ") || "No genres available"}
+              </p>
             </div>
 
             {/* Genres */}

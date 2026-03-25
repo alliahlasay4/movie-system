@@ -15,6 +15,18 @@ export const fetchPopularTV = async () => {
   return res.json();
 };
 
+export const fetchDetails = async (id, type) => {
+  const res = await fetch(
+    `${BASE_URL}/${type}/${id}?api_key=${API_KEY}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch details");
+  }
+
+  return res.json();
+};
+
 export const searchMulti = async (query) => {
   const res = await fetch(
     `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${query}`

@@ -11,11 +11,12 @@ export default function MovieCard({ movie, onClick }) {
     878: "Sci-Fi",
   };
 
-  const isTV = movie.media_type === "tv" || (!movie.title && movie.name);
+  const isTV = movie.media_type === "tv";
 
   const year = (movie.release_date || movie.first_air_date)?.split("-")[0];
 
-  const isNew = year && Number(year) >= 2024;
+  const currentYear = new Date().getFullYear();
+  const isNew = year && Number(year) >= currentYear - 1;
 
   const isTrending = movie.popularity > 150; // adjust threshold if needed
 
@@ -82,15 +83,6 @@ export default function MovieCard({ movie, onClick }) {
         {/* Year */}
         <p className="text-xs text-textMuted">
           {year || "—"}
-        </p>
-
-        {/* Runtime / Seasons */}
-        <p className="text-xs text-textMuted">
-          {movie.runtime
-            ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
-            : movie.number_of_seasons
-              ? `${movie.number_of_seasons} Season${movie.number_of_seasons > 1 ? "s" : ""}`
-              : ""}
         </p>
       </div>
     </div>

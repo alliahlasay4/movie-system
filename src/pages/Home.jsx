@@ -7,6 +7,7 @@ import {
 } from "../services/api";
 import MovieCard from "../components/MovieCard";
 import MovieModal from "../components/MovieModal";
+import { fetchDetails } from "../services/api";
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
@@ -26,6 +27,13 @@ export default function Home() {
   const [sourceFilter, setSourceFilter] = useState("trending");
   // values will now be: "trending" | "popular"
   const [sourceOpen, setSourceOpen] = useState(false);
+
+  const normalize = (item) => ({
+    ...item,
+    media_type:
+      item.media_type ||
+      (item.title ? "movie" : "tv"),
+  });
 
   useEffect(() => {
     loadMovies();
@@ -53,7 +61,7 @@ export default function Home() {
       }
     }
 
-    setMovies(data?.results || []);
+    setMovies((data?.results || []).map(normalize));
   };
 
   const handleSearch = async (e) => {
@@ -80,6 +88,8 @@ export default function Home() {
         // fallback for endpoints without media_type
         (typeFilter === "movie" && movie.title) ||
         (typeFilter === "tv" && movie.name);
+
+
 
       return ratingOk && typeOk;
     })
@@ -317,7 +327,16 @@ export default function Home() {
             <MovieCard
               key={movie.id}
               movie={movie}
-              onClick={() => setSelectedMovie(movie)}
+              onClick={async () => {
+                try {
+                  const type = movie.media_type;
+                  const full = await fetchDetails(movie.id, type);
+                  setSelectedMovie(full);
+                } catch (err) {
+                  console.error(err);
+                  alert("Failed to load movie details");
+                }
+              }}
             />
           ))}
         </div>
