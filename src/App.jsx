@@ -6,13 +6,15 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import User from "./pages/User";
+import Favorites from "./pages/Favorites";
 
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen text-textMain">
+      <div className="min-h-screen bg-[#0C1322] text-textMain">
         <Navbar />
 
         <Toaster
@@ -31,7 +33,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* 🔐 Protected Admin Route */}
+          {/* 🔐 Admin */}
           <Route
             path="/admin"
             element={
@@ -41,6 +43,26 @@ export default function App() {
             }
           />
 
+          {/* 🔐 User */}
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute role="user">
+                <User />
+
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 🔐 Favorites */}
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute role="user">
+                <Favorites />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

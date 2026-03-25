@@ -51,6 +51,19 @@ export default function Navbar() {
                 Dashboard
               </Link>
             )}
+
+            {/* User only */}
+            {user?.role === "user" && (
+              <>
+                <Link to="/user" className="text-textMuted hover:text-textMain">
+                  Dashboard
+                </Link>
+
+                <Link to="/favorites" className="text-textMuted hover:text-textMain">
+                  Favorites
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Right */}

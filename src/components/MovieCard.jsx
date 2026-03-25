@@ -1,3 +1,7 @@
+import { useState, useEffect } from "react";
+
+import { Heart } from "lucide-react";
+
 export default function MovieCard({ movie, onClick }) {
 
   const genreMap = {
@@ -18,7 +22,51 @@ export default function MovieCard({ movie, onClick }) {
   const currentYear = new Date().getFullYear();
   const isNew = year && Number(year) >= currentYear - 1;
 
-  const isTrending = movie.popularity > 150; // adjust threshold if needed
+  const isTrending = movie.popularity > 150;
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+
+  const isFavorited = () => {
+    if (!user) return false;
+
+    const allFavorites =
+      JSON.parse(localStorage.getItem("favorites")) || {};
+
+    const userFavorites = allFavorites[user.id] || [];
+
+    return userFavorites.some((m) => m.id === movie.id);
+  };
+
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
+
+    if (!user) return;
+
+    const allFavorites =
+      JSON.parse(localStorage.getItem("favorites")) || {};
+
+    const userFavorites = allFavorites[user.id] || [];
+
+    const exists = userFavorites.some((m) => m.id === movie.id);
+
+    let updated;
+
+    if (exists) {
+      updated = userFavorites.filter((m) => m.id !== movie.id);
+    } else {
+      updated = [...userFavorites, movie];
+    }
+
+    allFavorites[user.id] = updated;
+    localStorage.setItem("favorites", JSON.stringify(allFavorites));
+
+    setFavorited(!exists); // ✅ force UI update
+  };
+
+  const [favorited, setFavorited] = useState(false);
+
+  useEffect(() => {
+    setFavorited(isFavorited());
+  }, [movie.id]);
 
   return (
     <div
@@ -40,13 +88,26 @@ export default function MovieCard({ movie, onClick }) {
           </div>
         )}
 
+        {/* ❤️ Favorite Button (top right like Netflix style) */}
+        <button
+          onClick={toggleFavorite}
+          className={`absolute top-2 right-2 bg-black/70 backdrop-blur p-2 rounded-full transition ${favorited
+              ? "text-red-500 scale-110"
+              : "text-white hover:bg-black"
+            }`}
+        >
+          <Heart
+            size={16}
+            className={favorited ? "fill-red-500" : ""}
+          />
+        </button>
         {/* Type badge */}
         <div className="absolute top-2 left-2 bg-accentViolet text-xs px-2 py-1 rounded text-white">
           {isTV ? "TV" : "Movie"}
         </div>
 
         {/* Rating */}
-        <div className="absolute top-2 right-2 bg-black/70 text-xs px-2 py-1 rounded-md text-white">
+        <div className="absolute top-10 right-2 bg-black/70 text-xs px-2 py-1 rounded-md text-white">
           ⭐ {movie.vote_average?.toFixed(1) || "N/A"}
         </div>
 
@@ -85,6 +146,7 @@ export default function MovieCard({ movie, onClick }) {
           {year || "—"}
         </p>
       </div>
+
     </div>
   );
 }
