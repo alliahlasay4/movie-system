@@ -40,3 +40,39 @@ export const fetchTrending = async () => {
   );
   return res.json();
 };
+
+export const fetchCredits = async (id, type) => {
+  const res = await fetch(
+    `${BASE_URL}/${type}/${id}/credits?api_key=${API_KEY}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch credits");
+  }
+
+  return res.json();
+};
+
+export const fetchVideos = async (id, type) => {
+  const res = await fetch(
+    `${BASE_URL}/${type}/${id}/videos?api_key=${API_KEY}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch videos");
+  }
+
+  return res.json();
+};
+
+export const fetchSimilar = async (id, type) => {
+  const res = await fetch(
+    `${BASE_URL}/${type}/${id}/similar?api_key=${API_KEY}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch similar content");
+  }
+
+  return res.json();
+};

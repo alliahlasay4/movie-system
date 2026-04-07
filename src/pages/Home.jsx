@@ -1,32 +1,23 @@
+
+
 import { useEffect, useState } from "react";
 import {
   fetchTrending,
   fetchPopularMovies,
   fetchPopularTV,
-  searchMulti
+  fetchDetails,
 } from "../services/api";
-import MovieCard from "../components/MovieCard";
+
+import Hero from "../components/Hero";
+import MovieRow from "../components/MovieRow";
 import MovieModal from "../components/MovieModal";
-import { fetchDetails } from "../services/api";
 
 export default function Home() {
-  const [movies, setMovies] = useState([]);
-  const [query, setQuery] = useState("");
-  const [sortBy, setSortBy] = useState("");
-  const [minRating, setMinRating] = useState(0);
-
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [typeOpen, setTypeOpen] = useState(false);
-
-  // NEW: dropdown states
-  const [sortOpen, setSortOpen] = useState(false);
-  const [ratingOpen, setRatingOpen] = useState(false);
-
+  const [trending, setTrending] = useState([]);
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [popularTV, setPopularTV] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
-
-  const [sourceFilter, setSourceFilter] = useState("trending");
-  // values will now be: "trending" | "popular"
-  const [sourceOpen, setSourceOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const normalize = (item) => ({
     ...item,
@@ -36,317 +27,100 @@ export default function Home() {
   });
 
   useEffect(() => {
-    loadMovies();
-  }, [sourceFilter, typeFilter]);
+    loadHome();
+  }, []);
+  const loadHome = async () => {
+    try {
+      setLoading(true);
 
-  const loadMovies = async () => {
-    let data;
+      const t = await fetchTrending();
+      const pm = await fetchPopularMovies();
+      const tv = await fetchPopularTV();
 
-    if (sourceFilter === "trending") {
-      data = await fetchTrending();
+      const normalizedTrending = t.results.map(normalize);
+
+      setTrending(normalizedTrending);
+      setPopularMovies(pm.results.map(normalize));
+      setPopularTV(tv.results.map(normalize));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-
-    if (sourceFilter === "popular") {
-      if (typeFilter === "movie") {
-        data = await fetchPopularMovies();
-      } else if (typeFilter === "tv") {
-        data = await fetchPopularTV();
-      } else {
-        const movies = await fetchPopularMovies();
-        const tv = await fetchPopularTV();
-
-        data = {
-          results: [...movies.results, ...tv.results],
-        };
-      }
-    }
-
-    setMovies((data?.results || []).map(normalize));
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (!query) return loadMovies();
+  if (loading) {
+    return (
+      <div className="bg-bg min-h-screen px-6 py-10 space-y-10">
 
-    const data = await searchMulti(query);
+        <div className="h-[60vh] bg-surface animate-pulse rounded-xl" />
 
-    const filtered = data.results.filter(
-      (item) => item.media_type !== "person"
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="space-y-3">
+            <div className="w-40 h-4 bg-surface animate-pulse rounded" />
+
+            <div className="flex gap-4">
+              {[...Array(6)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="w-[160px] h-[220px] bg-surface animate-pulse rounded-lg"
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     );
+  }
 
-    setMovies(filtered);
+  const handleMovieClick = async (movie) => {
+    try {
+      const full = await fetchDetails(movie.id, movie.media_type);
+
+      // preserve media_type
+      setSelectedMovie({ ...full, media_type: movie.media_type });
+    } catch {
+      alert("Failed to load details");
+    }
   };
-  const processedMovies = movies
-    .filter((movie) => {
-      // rating filter
-      const ratingOk = (movie.vote_average || 0) >= minRating;
-
-      // type filter
-      const typeOk =
-        typeFilter === "all" ||
-        movie.media_type === typeFilter ||
-        // fallback for endpoints without media_type
-        (typeFilter === "movie" && movie.title) ||
-        (typeFilter === "tv" && movie.name);
-
-
-
-      return ratingOk && typeOk;
-    })
-    .sort((a, b) => {
-      if (sortBy === "rating") {
-        return (b.vote_average || 0) - (a.vote_average || 0);
-      }
-      if (sortBy === "latest") {
-        return new Date(b.release_date || b.first_air_date) -
-          new Date(a.release_date || a.first_air_date);
-      }
-      return 0;
-    });
 
   return (
     <div className="bg-bg min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 py-6">
 
-        {/* Search */}
-        <form onSubmit={handleSearch} className="flex gap-3 mb-4">
-          <input
-            type="text"
-            placeholder="Search movies or TV shows..."
-            className="flex-1 px-4 py-2 rounded bg-surface border border-border 
-             text-textMain placeholder:text-textMuted
-             focus:outline-none focus:ring-2 focus:ring-accentViolet"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <button className="bg-accentViolet border border-border px-5 py-2 rounded text-white hover:bg-accentVioletHover transition">
-            Search
-          </button>
-        </form>
+      {/* HERO */}
+      <Hero movies={trending.slice(0, 5)} />
 
-        {/* Controls */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
+      {/* CONTENT */}
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
-          {/* Sort Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setSortOpen(!sortOpen);
-                setRatingOpen(false);
-              }}
-              className="bg-surface px-3 py-2 rounded border border-border text-sm text-textMain w-40 text-left"
-            >
-              {sortBy === "rating"
-                ? "Top Rated"
-                : sortBy === "latest"
-                  ? "Latest"
-                  : "Sort By"}
-            </button>
-
-            {sortOpen && (
-              <div className="absolute mt-2 w-40 bg-surface border border-border rounded-md shadow-lg z-50">
-                <div
-                  onClick={() => {
-                    setSortBy("");
-                    setSortOpen(false);
-                  }}
-                  className="px-4 py-2 text-sm text-textMain hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Sort By
-                </div>
-                <div
-                  onClick={() => {
-                    setSortBy("rating");
-                    setSortOpen(false);
-                  }}
-                  className="px-4 py-2 text-sm text-textMain hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Top Rated
-                </div>
-                <div
-                  onClick={() => {
-                    setSortBy("latest");
-                    setSortOpen(false);
-                  }}
-                  className="px-4 py-2 text-sm text-textMain hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Latest
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Rating Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setRatingOpen(!ratingOpen);
-                setSortOpen(false);
-              }}
-              className="bg-surface px-3 py-2 rounded border border-border text-sm text-textMain w-40 text-left"
-            >
-              {minRating === 0 ? "All Ratings" : `${minRating}+ ⭐`}
-            </button>
-
-            {ratingOpen && (
-              <div className="absolute mt-2 w-40 bg-surface border border-border rounded-md shadow-lg z-50">
-                {[0, 5, 6, 7, 8].map((rate) => (
-                  <div
-                    key={rate}
-                    onClick={() => {
-                      setMinRating(rate);
-                      setRatingOpen(false);
-                    }}
-                    className="px-4 py-2 text-sm text-textMain hover:bg-accentViolet hover:text-white cursor-pointer"
-                  >
-                    {rate === 0 ? "All Ratings" : `${rate}+ ⭐`}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => {
-                setSourceOpen(!sourceOpen);
-                setSortOpen(false);
-                setRatingOpen(false);
-                setTypeOpen(false);
-              }}
-              className="bg-surface px-3 py-2 rounded border border-border text-sm text-textMain w-40 text-left"
-            >
-              {sourceFilter === "trending" ? "Trending" : "Popular"}
-            </button>
-
-            {sourceOpen && (
-              <div className="absolute mt-2 w-40 bg-surface border border-border rounded-md shadow-lg z-50">
-                <div
-                  onClick={() => {
-                    setSourceFilter("trending");
-                    setSourceOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Trending
-                </div>
-
-                <div
-                  onClick={() => {
-                    setSourceFilter("popular");
-                    setSourceOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Popular
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => {
-                setTypeOpen(!typeOpen);
-                setSortOpen(false);
-                setRatingOpen(false);
-                setSourceOpen(false);
-              }}
-              className="bg-surface px-3 py-2 rounded border border-border text-sm text-textMain w-40 text-left"
-            >
-              {typeFilter === "all"
-                ? "All Types"
-                : typeFilter === "movie"
-                  ? "Movies"
-                  : "TV Shows"}
-            </button>
-
-            {typeOpen && (
-              <div className="absolute mt-2 w-40 bg-surface border border-border rounded-md shadow-lg z-50">
-                <div
-                  onClick={() => {
-                    setTypeFilter("all");
-                    setTypeOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  All Types
-                </div>
-
-                <div
-                  onClick={() => {
-                    setTypeFilter("movie");
-                    setTypeOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  Movies
-                </div>
-
-                <div
-                  onClick={() => {
-                    setTypeFilter("tv");
-                    setTypeOpen(false);
-                  }}
-                  className="px-4 py-2 hover:bg-accentViolet hover:text-white cursor-pointer"
-                >
-                  TV Shows
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Reset */}
-          <button
-            onClick={() => {
-              setSortBy("");
-              setMinRating(0);
-              setTypeFilter("all");
-              setSourceFilter("trending");
-              setQuery("");
-
-              // optional: close dropdowns
-              setSortOpen(false);
-              setRatingOpen(false);
-              setTypeOpen(false);
-              setSourceOpen(false);
-
-              // reload default data
-              loadMovies();
-            }}
-            className="bg-border hover:bg-accentViolet hover:text-white px-4 py-2 rounded text-sm text-textMuted transition"
-          >
-            Reset
-          </button>
-
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {processedMovies?.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              onClick={async () => {
-                try {
-                  const type = movie.media_type;
-                  const full = await fetchDetails(movie.id, type);
-                  setSelectedMovie(full);
-                } catch (err) {
-                  console.error(err);
-                  alert("Failed to load movie details");
-                }
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Modal */}
-        <MovieModal
-          movie={selectedMovie}
-          onClose={() => setSelectedMovie(null)}
+        <MovieRow
+          title="Trending This Week"
+          movies={trending}
+          onClick={handleMovieClick}
+          viewMoreLink="/trending"
         />
-      </div >
+
+        <MovieRow
+          title="Popular Movies"
+          movies={popularMovies}
+          onClick={handleMovieClick}
+          viewMoreLink="/movies"
+        />
+
+        <MovieRow
+          title="Popular TV Shows"
+          movies={popularTV}
+          onClick={handleMovieClick}
+          viewMoreLink="/tv"
+        />
+      </div>
+
+      {/* MODAL */}
+      <MovieModal
+        movie={selectedMovie}
+        onClose={() => setSelectedMovie(null)}
+      />
+
     </div>
   );
 }

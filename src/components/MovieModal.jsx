@@ -1,4 +1,14 @@
+import { useNavigate } from "react-router-dom";
+
+import { useState } from "react";
+
+import { createSlug } from "../utils/slug";
+
 export default function MovieModal({ movie, onClose }) {
+
+  const navigate = useNavigate();
+  const [showPoster, setShowPoster] = useState(false);
+
 
   const genreMap = {
     28: "Action",
@@ -29,14 +39,22 @@ export default function MovieModal({ movie, onClose }) {
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title || movie.name}
-              className="w-full h-full object-cover"
+              onClick={() => setShowPoster(true)}
+              className="w-full h-full object-cover cursor-zoom-in hover:opacity-90 transition"
             />
           ) : (
             <div className="text-textMuted">No Image</div>
           )}
         </div>
 
-        <div className="w-1/2 h-full p-6 flex flex-col justify-between overflow-y-auto">
+        <div className="relative w-1/2 h-full p-6 flex flex-col justify-between overflow-y-auto">
+
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-textMuted hover:text-white text-xl"
+          >
+            ✕
+          </button>
 
           <div className="space-y-4">
 
@@ -123,15 +141,48 @@ export default function MovieModal({ movie, onClose }) {
           </div>
 
           {/* Close button */}
-          <button
-            onClick={onClose}
-            className="mt-4 bg-accentViolet hover:bg-accentVioletHover text-white py-2 rounded-md text-sm"
-          >
-            Close
-          </button>
+          <div className="mt-4">
+            <button
+              onClick={() => {
+                onClose(); // optional but better UX
+
+                const type =
+                  movie.media_type ||
+                  (movie.title ? "movie" : "tv");
+
+                const slug = createSlug(movie);
+
+                navigate(`/movie/${slug}?type=${type}`);
+              }}
+              className="w-full bg-accentViolet hover:bg-accentVioletHover text-white py-2 rounded-md text-sm"
+            >
+              View Full Page
+            </button>
+          </div>
 
         </div>
       </div>
+      {showPoster && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60]"
+          onClick={() => setShowPoster(false)}
+        >
+          <img
+            src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+          />
+
+          {/* Close button */}
+          <button
+            onClick={() => setShowPoster(false)}
+            className="absolute top-6 right-6 text-white text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
+
+
   );
 }

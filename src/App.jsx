@@ -8,6 +8,9 @@ import Admin from "./pages/Admin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import User from "./pages/User";
 import Favorites from "./pages/Favorites";
+import CategoryPage from "./pages/CategoryPage";
+import MovieDetails from "./pages/MovieDetails";
+import Search from "./pages/Search";
 
 import { Toaster } from "react-hot-toast";
 
@@ -29,11 +32,18 @@ export default function App() {
         />
 
         <Routes>
+          {/* MAIN */}
           <Route path="/" element={<Home />} />
+
+          {/* AUTH */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* 🔐 Admin */}
+          <Route path="/movie/:slug" element={<MovieDetails />} />
+
+          <Route path="/search" element={<Search />} />
+
+          {/* 🔐 ADMIN */}
           <Route
             path="/admin"
             element={
@@ -43,18 +53,17 @@ export default function App() {
             }
           />
 
-          {/* 🔐 User */}
+          {/* 🔐 USER */}
           <Route
             path="/user"
             element={
               <ProtectedRoute role="user">
                 <User />
-
               </ProtectedRoute>
             }
           />
 
-          {/* 🔐 Favorites */}
+          {/* 🔐 FAVORITES */}
           <Route
             path="/favorites"
             element={
@@ -63,6 +72,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* 🎬 CATEGORY PAGES (IMPORTANT: KEEP LAST) */}
+          <Route path="/:type" element={<CategoryPage />} />
+          
         </Routes>
       </div>
     </Router>
