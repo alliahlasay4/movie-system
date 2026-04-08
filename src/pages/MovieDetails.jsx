@@ -1,5 +1,7 @@
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { toggleWatchlist, isInWatchlist } from "../utils/userMovies";
+
 import {
   fetchDetails,
   fetchCredits,
@@ -11,6 +13,12 @@ import MovieCard from "../components/MovieCard";
 import { createSlug } from "../utils/slug";
 
 export default function MovieDetails() {
+
+  const [refresh, setRefresh] = useState(false);
+
+  
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -62,6 +70,9 @@ export default function MovieDetails() {
       </div>
     );
   }
+
+  const inWatchlist =
+    user && isInWatchlist(user.id, movie.id);
 
   return (
     <div className="bg-bg min-h-screen text-white">
@@ -133,8 +144,21 @@ export default function MovieDetails() {
                   </a>
                 )}
 
-                <button className="px-5 py-2 border border-white/30 rounded-lg text-sm hover:bg-white hover:text-black transition">
-                  + Add to Watchlist
+                <button
+                  onClick={() => {
+                  if (!user) return;
+
+                  localStorage.setItem(`movie-${movie.id}`, JSON.stringify(movie));
+                  toggleWatchlist(user.id, movie);
+
+                  setRefresh(prev => !prev); // force re-render
+                }}
+                  className={`px-5 py-2 rounded-lg text-sm transition ${inWatchlist
+                      ? "bg-accentViolet text-white"
+                      : "border border-white/30 hover:bg-white hover:text-black"
+                    }`}
+                >
+                  {inWatchlist ? "✓ In Watchlist" : "+ Add to Watchlist"}
                 </button>
               </div>
 

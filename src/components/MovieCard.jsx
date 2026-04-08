@@ -111,19 +111,6 @@ export default function MovieCard({ movie, onClick }) {
           ⭐ {movie.vote_average?.toFixed(1) || "N/A"}
         </div>
 
-        {/* NEW badge */}
-        {isNew && (
-          <div className="absolute bottom-2 left-2 bg-green-500 text-[10px] px-2 py-1 rounded text-white">
-            NEW
-          </div>
-        )}
-
-        {/* Trending badge */}
-        {isTrending && (
-          <div className="absolute bottom-2 right-2 bg-orange-500 text-[10px] px-2 py-1 rounded text-white">
-            🔥 HOT
-          </div>
-        )}
       </div>
 
       {/* Content */}

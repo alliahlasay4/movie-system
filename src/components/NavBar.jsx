@@ -45,19 +45,30 @@ export default function Navbar() {
         </Link>
 
         {/* LEFT NAV (content-focused now) */}
-        <nav className="flex items-center gap-6">
+        {/* NOT LOGGED IN → FULL NAV */}
+        {!user && (
+          <>
+            {navLink("/", "Home")}
+            {navLink("/trending", "Trending")}
+            {navLink("/movies", "Movies")}
+            {navLink("/tv", "TV Shows")}
+          </>
+        )}
 
-          {navLink("/", "Home")}
-          {navLink("/trending", "Trending")}
-          {navLink("/movies", "Movies")}
-          {navLink("/tv", "TV Shows")}
+        {/* USER → CLEAN PERSONAL NAV */}
+        {user?.role === "user" && (
+          <>
+          
+            {navLink("/user", "Dashboard")}
+          </>
+        )}
 
-          {/* Keep dashboards but visually secondary */}
-          {user?.role === "admin" && navLink("/admin", "Admin")}
-          {user?.role === "user" && navLink("/user", "Dashboard")}
-
-          {user && navLink("/favorites", "Favorites")}
-        </nav>
+        {/* ADMIN */}
+        {user?.role === "admin" && (
+          <>
+            {navLink("/admin", "Admin")}
+          </>
+        )}
 
         {/* RIGHT SIDE */}
         <div className="ml-auto flex items-center gap-4">

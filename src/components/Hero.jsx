@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toggleWatchlist, isInWatchlist } from "../utils/userMovies";
 
 export default function Hero({ movies }) {
+
+  const [refresh, setRefresh] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+
   const [index, setIndex] = useState(0);
 
   // auto slide
@@ -18,6 +24,10 @@ export default function Hero({ movies }) {
   if (!movies || movies.length === 0) return null;
 
   const movie = movies[index];
+
+
+  const inWatchlist =
+    user && isInWatchlist(user.id, movie.id);
 
   return (
     <div className="relative h-[80vh] w-full overflow-hidden">
@@ -62,8 +72,19 @@ export default function Hero({ movies }) {
                 ▶ Watch Now
               </button>
 
-              <button className="border border-border px-6 py-2 rounded text-white">
-                + Watchlist
+              <button
+                onClick={() => {
+                  if (!user) return;
+
+                  localStorage.setItem(`movie-${movie.id}`, JSON.stringify(movie));
+                  toggleWatchlist(user.id, movie);
+
+                  setRefresh(prev => !prev); // force re-render
+                }}
+                className={`border px-6 py-2 rounded text-white ${inWatchlist ? "bg-accentViolet border-accentViolet" : "border-border"
+                  }`}
+              >
+                {inWatchlist ? "✓ In Watchlist" : "+ Watchlist"}
               </button>
             </div>
           </motion.div>
@@ -76,9 +97,8 @@ export default function Hero({ movies }) {
           <button
             key={i}
             onClick={() => setIndex(i)}
-            className={`w-2 h-2 rounded-full ${
-              i === index ? "bg-accentViolet" : "bg-white/40"
-            }`}
+            className={`w-2 h-2 rounded-full ${i === index ? "bg-accentViolet" : "bg-white/40"
+              }`}
           />
         ))}
       </div>

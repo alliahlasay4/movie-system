@@ -11,6 +11,7 @@ import Favorites from "./pages/Favorites";
 import CategoryPage from "./pages/CategoryPage";
 import MovieDetails from "./pages/MovieDetails";
 import Search from "./pages/Search";
+import Watchlist from "./pages/Watchlist";
 
 import { Toaster } from "react-hot-toast";
 
@@ -73,9 +74,18 @@ export default function App() {
             }
           />
 
+          <Route
+            path="/watchlist"
+            element={
+              <ProtectedRoute role="user">
+                <Watchlist />
+              </ProtectedRoute>
+            }
+          />
+
           {/* 🎬 CATEGORY PAGES (IMPORTANT: KEEP LAST) */}
           <Route path="/:type" element={<CategoryPage />} />
-          
+
         </Routes>
       </div>
     </Router>
