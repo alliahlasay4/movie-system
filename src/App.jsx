@@ -12,6 +12,7 @@ import CategoryPage from "./pages/CategoryPage";
 import MovieDetails from "./pages/MovieDetails";
 import Search from "./pages/Search";
 import Watchlist from "./pages/Watchlist";
+import Activity from "./pages/Activity";
 
 import { Toaster } from "react-hot-toast";
 
@@ -79,6 +80,15 @@ export default function App() {
             element={
               <ProtectedRoute role="user">
                 <Watchlist />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/activity"
+            element={
+              <ProtectedRoute role="user">
+                <Activity />
               </ProtectedRoute>
             }
           />

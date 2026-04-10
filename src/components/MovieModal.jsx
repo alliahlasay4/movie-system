@@ -29,12 +29,12 @@ export default function MovieModal({ movie, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-surface rounded-xl overflow-hidden w-[1000px] max-w-[95%] h-[80vh] shadow-2xl flex"
+        className="bg-surface rounded-xl overflow-hidden w-full max-w-[95%] sm:max-w-[90%] lg:max-w-[1000px] xl:max-w-[1100px] h-auto max-h-[90vh] shadow-2xl flex flex-col lg:flex-row"
         onClick={(e) => e.stopPropagation()}
       >
 
         {/* LEFT: Poster */}
-        <div className="w-1/2 h-full bg-black flex items-center justify-center">
+        <div className="w-full lg:w-1/2 h-72 lg:h-full bg-black flex items-center justify-center">
           {movie.poster_path ? (
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -47,7 +47,7 @@ export default function MovieModal({ movie, onClose }) {
           )}
         </div>
 
-        <div className="relative w-1/2 h-full p-6 flex flex-col justify-between overflow-y-auto">
+        <div className="relative w-full lg:w-1/2 h-full p-6 flex flex-col justify-between overflow-y-auto">
 
           <button
             onClick={onClose}

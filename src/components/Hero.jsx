@@ -30,7 +30,7 @@ export default function Hero({ movies }) {
     user && isInWatchlist(user.id, movie.id);
 
   return (
-    <div className="relative h-[80vh] w-full overflow-hidden">
+    <div className="relative h-[60vh] sm:h-[72vh] md:h-[80vh] lg:h-[85vh] w-full overflow-hidden">
 
       <AnimatePresence mode="wait">
         <motion.img
@@ -49,7 +49,7 @@ export default function Hero({ movies }) {
       <div className="absolute bottom-0 w-full h-40 bg-gradient-to-t from-bg to-transparent" />
 
       {/* content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
+      <div className="relative z-10 max-w-full sm:max-w-3xl mx-auto px-4 sm:px-6 h-full flex items-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={movie.id + "-text"}
@@ -59,15 +59,15 @@ export default function Hero({ movies }) {
             transition={{ duration: 0.5 }}
             className="max-w-xl space-y-4"
           >
-            <h1 className="text-4xl md:text-5xl font-bold">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
               {movie.title || movie.name}
             </h1>
 
-            <p className="text-sm text-textMuted line-clamp-3">
+            <p className="text-sm sm:text-base text-textMuted line-clamp-3">
               {movie.overview}
             </p>
 
-            <div className="flex gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button className="bg-accentViolet px-6 py-2 rounded text-white">
                 ▶ Watch Now
               </button>

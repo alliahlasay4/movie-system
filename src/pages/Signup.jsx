@@ -71,14 +71,14 @@ export default function Signup() {
     navigate("/");
   };
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-6">
+    <div className="min-h-screen flex items-center justify-center px-6 py-10 sm:py-0 relative z-10">
 
       {/* Background Image */}
       <div className="fixed inset-0 z-0">
         <img
           src="/background/poster.png"
           alt="background"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-right sm:object-center"
         />
         <div className="absolute inset-0 bg-black/40" />
       </div>

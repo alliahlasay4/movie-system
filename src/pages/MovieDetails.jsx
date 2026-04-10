@@ -78,7 +78,7 @@ export default function MovieDetails() {
     <div className="bg-bg min-h-screen text-white">
 
       {/* HERO */}
-      <div className="relative min-h-screen flex items-center">
+      <div className="relative min-h-screen flex items-center py-8 lg:py-12">
 
         {/* BACKDROP */}
         <img
@@ -90,13 +90,13 @@ export default function MovieDetails() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20" />
 
         {/* CONTENT */}
-        <div className="relative z-10 w-full flex justify-center px-6 pb-12">
-          <div className="flex flex-col md:flex-row items-center gap-10 max-w-4xl w-full">
+        <div className="relative z-10 w-full flex justify-center px-4 sm:px-6 pb-12">
+          <div className="flex flex-col md:flex-row items-center gap-8 max-w-5xl w-full">
 
             {/* POSTER */}
             <img
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              className="w-52 md:w-64 rounded-xl shadow-2xl"
+              className="w-full max-w-sm md:max-w-xs rounded-xl shadow-2xl mx-auto md:mx-0"
             />
 
             {/* INFO */}

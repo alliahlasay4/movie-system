@@ -20,12 +20,12 @@ export default function MovieRow({ title, movies, onClick, viewMoreLink }) {
 
       </div>
 
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+      <div className="flex gap-3 sm:gap-4 md:gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
 
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="min-w-[160px] snap-start"
+            className="min-w-[150px] sm:min-w-[170px] md:min-w-[210px] lg:min-w-[240px] snap-start"
           >
             <div className="scale-[0.95] hover:scale-100 transition">
               <MovieCard

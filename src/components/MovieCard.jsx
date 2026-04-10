@@ -80,10 +80,10 @@ export default function MovieCard({ movie, onClick }) {
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title || movie.name}
-            className="w-full h-[300px] object-cover"
+            className="w-full h-[220px] sm:h-[240px] md:h-[260px] lg:h-[280px] xl:h-[320px] object-cover"
           />
         ) : (
-          <div className="h-[300px] flex items-center justify-center text-textMuted">
+          <div className="h-[220px] sm:h-[240px] md:h-[260px] lg:h-[280px] xl:h-[320px] flex items-center justify-center text-textMuted">
             No Image
           </div>
         )}
@@ -115,12 +115,12 @@ export default function MovieCard({ movie, onClick }) {
 
       {/* Content */}
       <div className="p-3 space-y-1">
-        <h2 className="text-sm font-semibold text-textMain line-clamp-2">
+        <h2 className="text-sm sm:text-base md:text-[15px] font-semibold text-textMain line-clamp-2">
           {movie.title || movie.name}
         </h2>
 
         {/* Genres */}
-        <p className="text-xs text-textMuted">
+        <p className="text-[11px] sm:text-xs text-textMuted">
           {movie.genre_ids
             ?.slice(0, 2)
             .map(id => genreMap[id])

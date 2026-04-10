@@ -51,7 +51,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="bg-bg min-h-screen px-6 py-10 space-y-10">
+      <div className="bg-bg min-h-screen px-4 sm:px-6 py-10 space-y-10">
 
         <div className="h-[60vh] bg-surface animate-pulse rounded-xl" />
 
@@ -91,7 +91,7 @@ export default function Home() {
       <Hero movies={trending.slice(0, 5)} />
 
       {/* CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-10">
 
         <MovieRow
           title="Trending This Week"
